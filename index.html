@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>cardsTD — トランプ王国タワーディフェンス</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header id="hud">
+      <div class="stat" title="ライフ">❤ <span id="life">--</span></div>
+      <div class="stat" title="ゴールド">🪙 <span id="gold">--</span></div>
+      <div class="stat" title="ウェーブ">🌊 <span id="wave">0</span>/<span id="waveMax">0</span></div>
+      <div class="spacer"></div>
+      <button id="speedBtn" class="ctrl">x1</button>
+      <button id="pauseBtn" class="ctrl">⏸</button>
+    </header>
+
+    <div id="boardWrap">
+      <canvas id="board"></canvas>
+      <div id="towerPanel" class="panel hidden">
+        <div id="towerInfo"></div>
+        <div class="panel-btns">
+          <button id="upgradeBtn">強化</button>
+          <button id="sellBtn">売却</button>
+          <button id="closeBtn">✕</button>
+        </div>
+      </div>
+      <div id="overlay" class="overlay hidden"></div>
+    </div>
+
+    <div id="tray"></div>
+
+    <footer id="foot">
+      <button id="startWaveBtn">ウェーブ開始 ▶</button>
+      <span id="hint"></span>
+    </footer>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
