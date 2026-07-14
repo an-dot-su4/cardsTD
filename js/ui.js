@@ -4,8 +4,16 @@ window.CTD = window.CTD || {};
   'use strict';
 
   var RED = { '♥': true, '♦': true };
+  var ATK_KEY = { '単発': 'single', '連射': 'rapid', '範囲': 'splash' };
 
   function el(id) { return document.getElementById(id); }
+
+  // Express a pixel range in grid cells + a short 短/中/長 label.
+  function rangeInfo(px) {
+    var cells = (px / CTD.CONFIG.CELL).toFixed(1);
+    var word = px < 100 ? '短' : (px <= 125 ? '中' : '長');
+    return { cells: cells, word: word };
+  }
 
   var UI = {};
 
@@ -35,9 +43,19 @@ window.CTD = window.CTD || {};
 
     el('overlay').addEventListener('click', function (ev) {
       if (ev.target && ev.target.dataset && ev.target.dataset.act === 'start') {
+        UI.coachDismissed = false; // show the coach again on a fresh run
         game.start();
       }
     });
+
+    this.coachDismissed = false;
+    el('coachClose').addEventListener('click', function () { UI.coachDismissed = true; });
+    el('coachBody').innerHTML =
+      '<b>あそびかた</b><br>' +
+      '① 下のカードを選ぶ<br>' +
+      '② 光るマスをタップ → <b>もう一度タップで配置</b>（白い円＝攻撃範囲）<br>' +
+      '③ 〈ウェーブ開始〉で敵が進軍。倒してゴールドを稼ぎ、タワーをタップで強化<br>' +
+      '♣クラブは着弾点の<b>まわりもまとめて攻撃</b>（黄色い円）';
   };
 
   UI.buildTray = function () {
@@ -49,14 +67,17 @@ window.CTD = window.CTD || {};
       var card = document.createElement('div');
       card.className = 'tcard';
       card.dataset.id = id;
+      var r = rangeInfo(def.levels[0].range);
       card.innerHTML =
         '<div class="suit ' + (RED[def.suit] ? 'red' : '') + '">' + def.suit + '</div>' +
         '<div class="nm">' + def.name + '</div>' +
-        '<div class="desc">' + def.desc + '</div>' +
+        '<div class="badge atk-' + ATK_KEY[def.atk] + '">' + def.atk + '</div>' +
+        '<div class="spec">攻撃 ' + def.levels[0].damage + ' ／ 射程 ' + r.word + '<br>（約' + r.cells + 'マス）</div>' +
         '<div class="cost">🪙' + def.buildCost + '</div>';
       card.addEventListener('click', function () {
         if (game.phase === 'title' || game.phase === 'over' || game.phase === 'win') return;
         game.placing = (game.placing === id) ? null : id;
+        game.pending = null;
         game.selected = null;
       });
       tray.appendChild(card);
@@ -82,9 +103,16 @@ window.CTD = window.CTD || {};
     // start-wave button + hint
     var btn = el('startWaveBtn');
     btn.disabled = !game.canStartWave();
-    if (game.phase === 'wave') el('hint').textContent = '進行中… 敵を食い止めろ！';
+    if (game.placing && game.pending) el('hint').textContent = 'もう一度タップで配置（円＝攻撃範囲）';
+    else if (game.placing) el('hint').textContent = '光るマスをタップ（射程が表示されます）';
+    else if (game.phase === 'wave') el('hint').textContent = '進行中… 敵を食い止めろ！';
     else if (game.canStartWave()) el('hint').textContent = 'タワーを配置して次のウェーブへ';
     else el('hint').textContent = '';
+
+    // first-stage coach banner (before the very first wave)
+    var showCoach = game.phase === 'build' && game.waveIndex < 0 &&
+      !this.coachDismissed && game.towers.length === 0;
+    el('coach').classList.toggle('hidden', !showCoach);
 
     this.refreshPanel();
     this.refreshOverlay();
@@ -100,9 +128,12 @@ window.CTD = window.CTD || {};
     panel.classList.remove('hidden');
     var lv = t.def.levels[t.level];
     var cost = game.upgradeCost(t);
+    var r = rangeInfo(lv.range);
+    var atk = t.def.hit === 'splash' ? '範囲（周囲もダメージ）' : t.def.atk;
     el('towerInfo').innerHTML =
       '<b>' + t.def.suit + ' ' + t.def.name + '</b>（ランク ' + lv.rank + '）<br>' +
-      '攻撃力 ' + lv.damage + ' ／ 射程 ' + Math.round(lv.range) + ' ／ 連射 ' + lv.fireRate.toFixed(1) + '/秒';
+      '攻撃力 ' + lv.damage + ' ／ 連射 ' + lv.fireRate.toFixed(1) + '/秒<br>' +
+      '射程 ' + r.word + '（約' + r.cells + 'マス）／ 攻撃 ' + atk;
     var up = el('upgradeBtn');
     if (cost == null) { up.textContent = '最大ランク'; up.disabled = true; }
     else { up.textContent = '強化 🪙' + cost; up.disabled = game.gold < cost; }

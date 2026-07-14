@@ -23,16 +23,26 @@ window.CTD = window.CTD || {};
       if (!playable()) return;
       var p = toLogical(canvas, ev.clientX, ev.clientY);
       var col = Math.floor(p.x / C.CELL), row = Math.floor(p.y / C.CELL);
-
       var existing = game.occupied[col + ',' + row];
+
       if (game.placing) {
         if (existing) {
           // tapping an existing tower selects it (to upgrade/sell) and disarms
-          game.placing = null;
+          game.placing = null; game.pending = null;
           game.selected = existing;
-        } else {
+          return;
+        }
+        if (!game.canBuildAt(col, row)) { game.pending = null; return; }
+
+        // Mouse has a live hover range preview, so a single click places.
+        // Touch/pen has no hover, so first tap previews the range, second tap
+        // on the same cell confirms — the player always sees the range first.
+        if (ev.pointerType === 'mouse') {
           game.placeTower(game.placing, col, row);
-          // keep the card armed so several towers can be placed in a row
+        } else if (game.pending && game.pending.col === col && game.pending.row === row) {
+          if (game.placeTower(game.placing, col, row)) game.pending = null;
+        } else {
+          game.pending = { col: col, row: row }; // pending drives the range ring
         }
         return;
       }
@@ -49,10 +59,17 @@ window.CTD = window.CTD || {};
       game.hover = null;
     });
 
+    // on touch, don't leave a stale hover ring after the finger lifts
+    function clearTouchHover(ev) {
+      if (ev.pointerType !== 'mouse') game.hover = null;
+    }
+    canvas.addEventListener('pointerup', clearTouchHover);
+    canvas.addEventListener('pointercancel', clearTouchHover);
+
     // right-click / long area outside cancels placement
     canvas.addEventListener('contextmenu', function (ev) {
       ev.preventDefault();
-      game.placing = null;
+      game.placing = null; game.pending = null;
     });
   };
 

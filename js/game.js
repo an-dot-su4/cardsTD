@@ -56,6 +56,7 @@ window.CTD = window.CTD || {};
     this.effects = [];
     this.occupied = {};        // "col,row" -> tower
     this.placing = null;       // tower type id being placed
+    this.pending = null;       // {col,row} touch preview cell (tap to confirm)
     this.selected = null;      // selected tower for upgrade/sell
     this.hover = null;
     this.spawnQueue = [];      // pending {type, time}
@@ -128,6 +129,7 @@ window.CTD = window.CTD || {};
       t += 0.6; // small gap between groups
     }
     this.spawnClock = 0;
+    this.pending = null;
     this.phase = 'wave';
   };
 

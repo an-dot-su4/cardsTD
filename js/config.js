@@ -29,7 +29,7 @@ window.CTD = window.CTD || {};
   // Towers = playing-card soldiers. Levels advance the rank J -> Q -> K.
   CTD.TOWER_TYPES = {
     spade: {
-      id: 'spade', name: 'スペード剣兵', suit: '♠', color: '#1a1a1a',
+      id: 'spade', name: 'スペード剣兵', suit: '♠', color: '#1a1a1a', atk: '単発',
       buildCost: 50, projSpeed: 300, hit: 'single', desc: '高威力・単発',
       levels: [
         { rank: 'J', damage: 18, range: 95, fireRate: 1.0 },
@@ -38,7 +38,7 @@ window.CTD = window.CTD || {};
       ]
     },
     diamond: {
-      id: 'diamond', name: 'ダイヤ弓兵', suit: '♦', color: '#c62828',
+      id: 'diamond', name: 'ダイヤ弓兵', suit: '♦', color: '#c62828', atk: '連射',
       buildCost: 40, projSpeed: 460, hit: 'single', desc: '連射・長射程',
       levels: [
         { rank: 'J', damage: 6, range: 110, fireRate: 3.5 },
@@ -47,7 +47,7 @@ window.CTD = window.CTD || {};
       ]
     },
     club: {
-      id: 'club', name: 'クラブ砲兵', suit: '♣', color: '#1a1a1a',
+      id: 'club', name: 'クラブ砲兵', suit: '♣', color: '#1a1a1a', atk: '範囲',
       buildCost: 70, projSpeed: 220, hit: 'splash', desc: '範囲攻撃',
       levels: [
         { rank: 'J', damage: 11, range: 85, fireRate: 0.8, splash: 46 },
@@ -68,7 +68,7 @@ window.CTD = window.CTD || {};
 
   // 10 waves of escalating pressure; face cards (mini-bosses) arrive late.
   CTD.WAVES = [
-    [{ type: 'number', count: 6, interval: 0.9 }],
+    [{ type: 'number', count: 5, interval: 1.1 }],
     [{ type: 'number', count: 10, interval: 0.7 }],
     [{ type: 'number', count: 6, interval: 0.6 }, { type: 'shield', count: 2, interval: 1.2 }],
     [{ type: 'shield', count: 5, interval: 1.0 }],
