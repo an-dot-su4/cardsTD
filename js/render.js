@@ -147,23 +147,50 @@ window.CTD = window.CTD || {};
   function drawPlacement(ctx, game) {
     if (!game.placing) return;
     var C = CTD.CONFIG;
+    var def = CTD.TOWER_TYPES[game.placing];
+    var lv = def.levels[0];
     // shade buildable cells
     for (var col = 0; col < C.COLS; col++) {
       for (var row = 0; row < C.ROWS; row++) {
         if (game.canBuildAt(col, row)) {
-          ctx.fillStyle = 'rgba(255,255,255,0.10)';
+          ctx.fillStyle = 'rgba(255,255,255,0.12)';
           ctx.fillRect(col * C.CELL + 2, row * C.CELL + 2, C.CELL - 4, C.CELL - 4);
         }
       }
     }
-    if (game.hover) {
-      var hc = Math.floor(game.hover.x / C.CELL), hr = Math.floor(game.hover.y / C.CELL);
-      var ok = game.canBuildAt(hc, hr) && game.gold >= CTD.TOWER_TYPES[game.placing].buildCost;
-      ctx.fillStyle = ok ? 'rgba(80,220,120,0.35)' : 'rgba(230,70,70,0.35)';
-      ctx.fillRect(hc * C.CELL + 1, hr * C.CELL + 1, C.CELL - 2, C.CELL - 2);
-      var lv = CTD.TOWER_TYPES[game.placing].levels[0];
-      drawRange(ctx, (hc + 0.5) * C.CELL, (hr + 0.5) * C.CELL, lv.range, ok);
+    // preview cell: the pending (tapped) cell on touch, else the mouse hover
+    var pc = null, pr = null;
+    if (game.pending) { pc = game.pending.col; pr = game.pending.row; }
+    else if (game.hover) { pc = Math.floor(game.hover.x / C.CELL); pr = Math.floor(game.hover.y / C.CELL); }
+    if (pc == null) return;
+
+    var ok = game.canBuildAt(pc, pr) && game.gold >= def.buildCost;
+    var cx = (pc + 0.5) * C.CELL, cy = (pr + 0.5) * C.CELL;
+    ctx.fillStyle = ok ? 'rgba(80,220,120,0.35)' : 'rgba(230,70,70,0.35)';
+    ctx.fillRect(pc * C.CELL + 1, pr * C.CELL + 1, C.CELL - 2, C.CELL - 2);
+    // attack range ring
+    drawRange(ctx, cx, cy, lv.range, ok);
+    // splash radius (for クラブ範囲攻撃) shown as a filled inner circle
+    if (def.hit === 'splash' && lv.splash) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, lv.splash, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,213,74,0.22)';
+      ctx.fill();
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = 'rgba(255,213,74,0.85)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.restore();
     }
+    // ghost tower
+    ctx.save();
+    ctx.globalAlpha = 0.7;
+    drawSoldier(ctx, cx, cy - 2, {
+      w: C.CELL * 0.62, h: C.CELL * 0.82,
+      suit: def.suit, rank: lv.rank, ink: def.color, weapon: true
+    });
+    ctx.restore();
   }
   CTD.drawPlacement = drawPlacement;
 

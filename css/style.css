@@ -50,8 +50,31 @@ html, body {
 .tcard .suit { font-size: 22px; line-height: 1; }
 .tcard .suit.red { color: #c62828; }
 .tcard .nm { font-size: 11px; font-weight: 700; margin: 2px 0; }
-.tcard .cost { font-size: 12px; font-weight: 700; color: #b8860b; }
+.tcard .cost { font-size: 12px; font-weight: 700; color: #b8860b; margin-top: 2px; }
 .tcard .desc { font-size: 10px; color: #555; }
+.tcard .spec { font-size: 10px; color: #444; line-height: 1.5; margin-top: 2px; }
+.tcard .badge {
+  display: inline-block; font-size: 10px; font-weight: 700; color: #fff;
+  background: #6b7b8c; border-radius: 6px; padding: 1px 6px; margin-bottom: 2px;
+}
+.tcard .badge.atk-single { background: #1a1a1a; }
+.tcard .badge.atk-rapid { background: #c62828; }
+.tcard .badge.atk-splash { background: #2e7d32; }
+
+/* first-stage coach banner */
+.coach {
+  position: absolute; left: 8px; right: 8px; top: 8px; z-index: 6;
+  background: rgba(15,20,15,0.95); border: 1px solid #ffd54a66;
+  border-radius: 12px; padding: 10px 30px 10px 12px;
+  box-shadow: 0 6px 18px #0008; font-size: 12.5px; line-height: 1.7;
+  pointer-events: none; /* let taps pass through to the board */
+}
+.coach b { color: #ffd54a; }
+#coachClose {
+  position: absolute; top: 6px; right: 6px; width: 28px; height: 28px;
+  border: none; border-radius: 6px; background: #ffffff33; color: #fff;
+  font-size: 14px; cursor: pointer; pointer-events: auto; /* but the ✕ stays clickable */
+}
 
 #foot {
   display: flex; align-items: center; gap: 10px;
