@@ -15,8 +15,7 @@ window.CTD = window.CTD || {};
   }
 
   // Build the road cell set and pixel path from the waypoints.
-  function buildPath() {
-    var wp = CTD.WAYPOINTS;
+  function buildPath(wp) {
     var road = {};
     var pixels = [];
     for (var i = 0; i < wp.length; i++) {
@@ -36,16 +35,23 @@ window.CTD = window.CTD || {};
   }
 
   function Game() {
-    var path = buildPath();
+    this.loadStage(0);
+  }
+
+  // Load a stage: rebuild the map/path from its waypoints, then reset state.
+  Game.prototype.loadStage = function (index) {
+    this.stageIndex = index;
+    this.stage = CTD.STAGES[index];
+    var path = buildPath(this.stage.waypoints);
     this.road = path.road;
     this.roadSet = path.roadSet;
     this.path = path.pixels;
     this.reset();
-  }
+  };
 
   Game.prototype.reset = function () {
-    this.gold = C.START_GOLD;
-    this.life = C.START_LIFE;
+    this.gold = this.stage.startGold;
+    this.life = this.stage.startLife;
     this.waveIndex = -1;       // -1 = not started yet
     this.phase = 'title';      // title | build | wave | over | win
     this.paused = false;
@@ -63,9 +69,14 @@ window.CTD = window.CTD || {};
     this.spawnClock = 0;
   };
 
-  Game.prototype.start = function () {
-    this.reset();
+  Game.prototype.start = function (index) {
+    this.loadStage(index != null ? index : this.stageIndex);
     this.phase = 'build';
+  };
+
+  Game.prototype.toTitle = function () {
+    this.reset();
+    this.phase = 'title';
   };
 
   Game.prototype.canBuildAt = function (col, row) {
@@ -111,13 +122,13 @@ window.CTD = window.CTD || {};
   };
 
   Game.prototype.canStartWave = function () {
-    return this.phase === 'build' && this.waveIndex < CTD.WAVES.length - 1;
+    return this.phase === 'build' && this.waveIndex < this.stage.waves.length - 1;
   };
 
   Game.prototype.startWave = function () {
     if (this.phase !== 'build') return;
     this.waveIndex += 1;
-    var groups = CTD.WAVES[this.waveIndex];
+    var groups = this.stage.waves[this.waveIndex];
     var t = 0;
     this.spawnQueue = [];
     for (var g = 0; g < groups.length; g++) {
@@ -136,7 +147,7 @@ window.CTD = window.CTD || {};
   Game.prototype.spawnEnemy = function (typeId) {
     var def = CTD.ENEMY_TYPES[typeId];
     var start = this.path[0];
-    var scale = 1 + Math.max(0, this.waveIndex) * C.HP_WAVE_SCALE;
+    var scale = 1 + Math.max(0, this.waveIndex) * this.stage.hpScale;
     var hp = Math.round(def.hp * scale);
     var rank = def.rank || String(2 + Math.floor(Math.random() * 9)); // 2..10 for pips
     var suit = def.kind === 'face'
@@ -226,7 +237,7 @@ window.CTD = window.CTD || {};
 
     // wave cleared?
     if (this.spawnQueue.length === 0 && this.enemies.length === 0) {
-      if (this.waveIndex >= CTD.WAVES.length - 1) {
+      if (this.waveIndex >= this.stage.waves.length - 1) {
         this.phase = 'win';
       } else {
         this.phase = 'build';

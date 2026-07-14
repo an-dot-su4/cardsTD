@@ -80,4 +80,39 @@ window.CTD = window.CTD || {};
     [{ type: 'shield', count: 6, interval: 0.7 }, { type: 'face', count: 2, interval: 3.0 }, { type: 'ace', count: 1, interval: 1 }]
   ];
 
+  // Stage 2: a longer, more winding road + tougher waves (existing enemies).
+  var STAGE2_WAYPOINTS = [
+    [5, -1], [5, 1], [1, 1], [1, 4], [9, 4], [9, 7], [1, 7],
+    [1, 10], [9, 10], [9, 13], [5, 13], [5, 15]
+  ];
+  var STAGE2_WAVES = [
+    [{ type: 'number', count: 8, interval: 0.7 }],
+    [{ type: 'number', count: 12, interval: 0.55 }],
+    [{ type: 'shield', count: 4, interval: 1.0 }, { type: 'number', count: 6, interval: 0.5 }],
+    [{ type: 'number', count: 16, interval: 0.45 }],
+    [{ type: 'shield', count: 8, interval: 0.8 }],
+    [{ type: 'face', count: 1, interval: 1 }, { type: 'number', count: 10, interval: 0.5 }],
+    [{ type: 'shield', count: 8, interval: 0.7 }, { type: 'number', count: 8, interval: 0.4 }],
+    [{ type: 'number', count: 20, interval: 0.35 }],
+    [{ type: 'face', count: 2, interval: 2.5 }, { type: 'shield', count: 6, interval: 0.7 }],
+    [{ type: 'shield', count: 10, interval: 0.6 }, { type: 'number', count: 12, interval: 0.4 }],
+    [{ type: 'face', count: 3, interval: 2.0 }],
+    [{ type: 'number', count: 24, interval: 0.3 }, { type: 'shield', count: 8, interval: 0.5 }],
+    [{ type: 'face', count: 3, interval: 1.5 }, { type: 'ace', count: 2, interval: 2.5 }]
+  ];
+
+  // Selectable stages. Stage 1 reuses the existing (tuning) map & waves.
+  CTD.STAGES = [
+    {
+      id: 'stage1', name: 'ステージ1', subtitle: 'はじまりの王国（練習）',
+      waypoints: CTD.WAYPOINTS, waves: CTD.WAVES,
+      startGold: 130, startLife: 20, hpScale: 0.10, tutorial: true
+    },
+    {
+      id: 'stage2', name: 'ステージ2', subtitle: '蛇の回廊（高難度）',
+      waypoints: STAGE2_WAYPOINTS, waves: STAGE2_WAVES,
+      startGold: 120, startLife: 20, hpScale: 0.13, tutorial: false
+    }
+  ];
+
 })(window.CTD);
