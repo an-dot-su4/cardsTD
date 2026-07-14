@@ -42,9 +42,14 @@ window.CTD = window.CTD || {};
     el('closeBtn').addEventListener('click', function () { game.selected = null; });
 
     el('overlay').addEventListener('click', function (ev) {
-      if (ev.target && ev.target.dataset && ev.target.dataset.act === 'start') {
+      // the click may land on an inner <span>; find the [data-act] element
+      var t = ev.target && ev.target.closest ? ev.target.closest('[data-act]') : ev.target;
+      if (!t || !t.dataset) return;
+      if (t.dataset.act === 'start') {
         UI.coachDismissed = false; // show the coach again on a fresh run
-        game.start();
+        game.start(t.dataset.stage != null ? +t.dataset.stage : game.stageIndex);
+      } else if (t.dataset.act === 'title') {
+        game.toTitle();
       }
     });
 
@@ -89,7 +94,8 @@ window.CTD = window.CTD || {};
     el('life').textContent = game.life;
     el('gold').textContent = game.gold;
     el('wave').textContent = Math.max(0, game.waveIndex + 1);
-    el('waveMax').textContent = CTD.WAVES.length;
+    el('waveMax').textContent = game.stage.waves.length;
+    el('stageName').textContent = game.stage.name;
 
     // tray selection / affordability
     var cards = el('tray').children;
@@ -109,8 +115,8 @@ window.CTD = window.CTD || {};
     else if (game.canStartWave()) el('hint').textContent = 'タワーを配置して次のウェーブへ';
     else el('hint').textContent = '';
 
-    // first-stage coach banner (before the very first wave)
-    var showCoach = game.phase === 'build' && game.waveIndex < 0 &&
+    // first-stage coach banner (tutorial stage only, before the very first wave)
+    var showCoach = game.stage.tutorial && game.phase === 'build' && game.waveIndex < 0 &&
       !this.coachDismissed && game.towers.length === 0;
     el('coach').classList.toggle('hidden', !showCoach);
 
@@ -145,23 +151,35 @@ window.CTD = window.CTD || {};
     this.lastPhase = game.phase;
     if (game.phase === 'title') {
       ov.classList.remove('hidden');
+      var stageBtns = CTD.STAGES.map(function (s, i) {
+        return '<button class="stage-btn" data-act="start" data-stage="' + i + '">' +
+          '<span class="s-name">' + s.name + '</span>' +
+          '<span class="s-sub">' + s.subtitle + '（全' + s.waves.length + '波）</span>' +
+          '</button>';
+      }).join('');
       ov.innerHTML =
         '<h1>♠ cardsTD ♥</h1>' +
         '<p>トランプ王国に攻め込むカード兵を、<br>トランプ兵士のタワーで食い止めよう。</p>' +
-        '<p>カードをタップ → マスをタップで配置。<br>敵を倒してゴールドを稼ぎ、強化しよう。</p>' +
-        '<button data-act="start">ゲーム開始</button>';
+        '<p class="pick">ステージを選ぶ</p>' +
+        '<div class="stage-list">' + stageBtns + '</div>';
     } else if (game.phase === 'over') {
       ov.classList.remove('hidden');
       ov.innerHTML =
         '<p class="big">💀</p><h1>ゲームオーバー</h1>' +
-        '<p>ウェーブ ' + (game.waveIndex + 1) + ' で王国は陥落した…</p>' +
-        '<button data-act="start">もう一度</button>';
+        '<p>' + game.stage.name + '・ウェーブ ' + (game.waveIndex + 1) + ' で王国は陥落した…</p>' +
+        '<div class="btn-row">' +
+        '<button data-act="start" data-stage="' + game.stageIndex + '">もう一度</button>' +
+        '<button class="ghost" data-act="title">ステージ選択へ</button>' +
+        '</div>';
     } else if (game.phase === 'win') {
       ov.classList.remove('hidden');
       ov.innerHTML =
         '<p class="big">👑</p><h1>勝利！</h1>' +
-        '<p>全ウェーブを防ぎ、王国を守り抜いた！</p>' +
-        '<button data-act="start">もう一度</button>';
+        '<p>' + game.stage.name + 'をクリア！<br>全ウェーブを防ぎ、王国を守り抜いた！</p>' +
+        '<div class="btn-row">' +
+        '<button data-act="start" data-stage="' + game.stageIndex + '">もう一度</button>' +
+        '<button class="ghost" data-act="title">ステージ選択へ</button>' +
+        '</div>';
     } else {
       ov.classList.add('hidden');
     }

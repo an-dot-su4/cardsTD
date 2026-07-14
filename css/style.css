@@ -120,4 +120,23 @@ html, body {
   background: #ffd54a; color: #222; border: none; border-radius: 12px;
   padding: 12px 24px; font-size: 17px; font-weight: 800; cursor: pointer;
 }
+.overlay .pick { font-weight: 800; color: #ffd54a; margin-top: 4px; }
+.stage-list { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
+.stage-btn {
+  display: flex; flex-direction: column; gap: 2px; width: 100%;
+  padding: 12px 16px !important; text-align: center;
+}
+.stage-btn .s-name { font-size: 17px; font-weight: 800; }
+.stage-btn .s-sub { font-size: 12px; font-weight: 600; color: #5a4a12; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.overlay button.ghost {
+  background: #ffffff22; color: #fff; font-size: 15px; padding: 10px 18px;
+}
+
+/* HUD stage label */
+#hud .stage-name {
+  background: #ffffff1a; border: 1px solid #ffffff33; border-radius: 8px;
+  padding: 4px 8px; font-size: 12px; font-weight: 700;
+}
+
 .hidden { display: none !important; }
