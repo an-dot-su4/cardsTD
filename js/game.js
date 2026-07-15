@@ -207,7 +207,8 @@ window.CTD = window.CTD || {};
       this.projectiles.push({
         x: t.x, y: t.y, target: target2, tx: target2.x, ty: target2.y,
         speed: t.def.projSpeed, damage: lv.damage,
-        splash: t.def.hit === 'splash' ? lv.splash : 0
+        splash: t.def.hit === 'splash' ? lv.splash : 0,
+        bonusArmored: t.def.bonusVsArmored || 1
       });
     }
 
@@ -257,15 +258,21 @@ window.CTD = window.CTD || {};
     return best;
   };
 
+  // Soft counter: ♠ deals +40% to armored enemies. No penalties — every tower
+  // always deals its full damage to everyone, so no matchup is ever hopeless.
+  function effDamage(p, enemy) {
+    return p.damage * ((enemy.def.armored && p.bonusArmored) ? p.bonusArmored : 1);
+  }
+
   Game.prototype.impact = function (p) {
     if (p.splash) {
       this.effects.push({ x: p.tx, y: p.ty, r: p.splash, life: 0.25, max: 0.25 });
       for (var i = this.enemies.length - 1; i >= 0; i--) {
         var e = this.enemies[i];
-        if (dist(p.tx, p.ty, e.x, e.y) <= p.splash) this.damage(e, p.damage, i);
+        if (dist(p.tx, p.ty, e.x, e.y) <= p.splash) this.damage(e, effDamage(p, e), i);
       }
     } else if (p.target && this.enemies.indexOf(p.target) >= 0) {
-      this.damage(p.target, p.damage, this.enemies.indexOf(p.target));
+      this.damage(p.target, effDamage(p, p.target), this.enemies.indexOf(p.target));
     }
   };
 

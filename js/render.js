@@ -228,8 +228,8 @@ window.CTD = window.CTD || {};
         w: w, h: h, suit: e.suit, rank: e.rank, ink: e.def.color,
         marching: true, phase: e.phase
       });
-      if (e.kind === 'shield') {
-        // small shield in the left hand
+      if (e.def.armored) {
+        // small shield marker in the left hand for any armored enemy
         ctx.save();
         ctx.fillStyle = '#9aa7b3';
         ctx.strokeStyle = '#4a5560';
