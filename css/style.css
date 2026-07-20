@@ -52,6 +52,7 @@ html, body {
 .tcard .nm { font-size: 11px; font-weight: 700; margin: 2px 0; }
 .tcard .cost { font-size: 12px; font-weight: 700; color: #b8860b; margin-top: 2px; }
 .tcard .desc { font-size: 10px; color: #555; }
+.tcard .role { font-size: 9.5px; color: #6a1b1a; font-weight: 700; margin-top: 1px; }
 .tcard .spec { font-size: 10px; color: #444; line-height: 1.5; margin-top: 2px; }
 .tcard .badge {
   display: inline-block; font-size: 10px; font-weight: 700; color: #fff;

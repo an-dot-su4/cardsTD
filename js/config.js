@@ -30,29 +30,30 @@ window.CTD = window.CTD || {};
   CTD.TOWER_TYPES = {
     spade: {
       id: 'spade', name: 'スペード剣兵', suit: '♠', color: '#1a1a1a', atk: '単発',
-      buildCost: 50, projSpeed: 300, hit: 'single', desc: '高威力・単発',
+      buildCost: 55, projSpeed: 300, hit: 'single', desc: '単発・装甲に強い',
+      bonusVsArmored: 1.4, // soft edge: +40% vs armored enemies (never a penalty to others)
       levels: [
-        { rank: 'J', damage: 18, range: 95, fireRate: 1.0 },
-        { rank: 'Q', damage: 30, range: 105, fireRate: 1.1, upgradeCost: 45 },
-        { rank: 'K', damage: 52, range: 120, fireRate: 1.25, upgradeCost: 85 }
+        { rank: 'J', damage: 20, range: 100, fireRate: 1.1 },
+        { rank: 'Q', damage: 32, range: 108, fireRate: 1.2, upgradeCost: 50 },
+        { rank: 'K', damage: 50, range: 116, fireRate: 1.3, upgradeCost: 90 }
       ]
     },
     diamond: {
       id: 'diamond', name: 'ダイヤ弓兵', suit: '♦', color: '#c62828', atk: '連射',
-      buildCost: 40, projSpeed: 460, hit: 'single', desc: '連射・長射程',
+      buildCost: 45, projSpeed: 460, hit: 'single', desc: '連射・長射程で万能',
       levels: [
-        { rank: 'J', damage: 6, range: 110, fireRate: 3.5 },
-        { rank: 'Q', damage: 9, range: 122, fireRate: 4.3, upgradeCost: 40 },
-        { rank: 'K', damage: 13, range: 138, fireRate: 5.2, upgradeCost: 75 }
+        { rank: 'J', damage: 6, range: 112, fireRate: 3.2 },
+        { rank: 'Q', damage: 9, range: 122, fireRate: 3.8, upgradeCost: 45 },
+        { rank: 'K', damage: 12, range: 132, fireRate: 4.5, upgradeCost: 80 }
       ]
     },
     club: {
       id: 'club', name: 'クラブ砲兵', suit: '♣', color: '#1a1a1a', atk: '範囲',
-      buildCost: 70, projSpeed: 220, hit: 'splash', desc: '範囲攻撃',
+      buildCost: 60, projSpeed: 220, hit: 'splash', desc: '範囲・群れに強い',
       levels: [
-        { rank: 'J', damage: 11, range: 85, fireRate: 0.8, splash: 46 },
-        { rank: 'Q', damage: 17, range: 92, fireRate: 0.9, splash: 54, upgradeCost: 60 },
-        { rank: 'K', damage: 26, range: 100, fireRate: 1.0, splash: 62, upgradeCost: 105 }
+        { rank: 'J', damage: 13, range: 90, fireRate: 1.0, splash: 55 },
+        { rank: 'Q', damage: 20, range: 98, fireRate: 1.1, splash: 63, upgradeCost: 55 },
+        { rank: 'K', damage: 30, range: 106, fireRate: 1.2, splash: 74, upgradeCost: 95 }
       ]
     }
   };
@@ -61,9 +62,9 @@ window.CTD = window.CTD || {};
   // Enemies = invading card soldiers.
   CTD.ENEMY_TYPES = {
     number: { id: 'number', name: '数札兵', hp: 34, speed: 74, reward: 6, color: '#c62828', kind: 'pip' },
-    shield: { id: 'shield', name: '盾持ち兵', hp: 120, speed: 44, reward: 13, color: '#37474f', kind: 'shield' },
-    face: { id: 'face', name: '絵札の騎士', hp: 280, speed: 48, reward: 48, color: '#6a1b9a', kind: 'face', rank: 'K' },
-    ace: { id: 'ace', name: 'エースの王', hp: 620, speed: 40, reward: 120, color: '#b8860b', kind: 'face', rank: 'A' }
+    shield: { id: 'shield', name: '盾持ち兵', hp: 120, speed: 44, reward: 13, color: '#37474f', kind: 'shield', armored: true },
+    face: { id: 'face', name: '絵札の騎士', hp: 280, speed: 48, reward: 48, color: '#6a1b9a', kind: 'face', rank: 'K', armored: true },
+    ace: { id: 'ace', name: 'エースの王', hp: 620, speed: 40, reward: 120, color: '#b8860b', kind: 'face', rank: 'A', armored: true }
   };
 
   // 10 waves of escalating pressure; face cards (mini-bosses) arrive late.

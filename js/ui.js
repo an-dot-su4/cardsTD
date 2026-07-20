@@ -60,7 +60,8 @@ window.CTD = window.CTD || {};
       '① 下のカードを選ぶ<br>' +
       '② 光るマスをタップ → <b>もう一度タップで配置</b>（白い円＝攻撃範囲）<br>' +
       '③ 〈ウェーブ開始〉で敵が進軍。倒してゴールドを稼ぎ、タワーをタップで強化<br>' +
-      '♣クラブは着弾点の<b>まわりもまとめて攻撃</b>（黄色い円）';
+      '<b>役割</b>：♠剣兵=盾/絵札/エース(装甲)にやや強い ／ ♣砲兵=群れ(範囲) ／ ♦弓兵=長射程で万能<br>' +
+      '<small>※どのタワーでも倒せます。得意な相手だと少し有利になる程度です</small>';
   };
 
   UI.buildTray = function () {
@@ -77,6 +78,7 @@ window.CTD = window.CTD || {};
         '<div class="suit ' + (RED[def.suit] ? 'red' : '') + '">' + def.suit + '</div>' +
         '<div class="nm">' + def.name + '</div>' +
         '<div class="badge atk-' + ATK_KEY[def.atk] + '">' + def.atk + '</div>' +
+        '<div class="role">' + def.desc + '</div>' +
         '<div class="spec">攻撃 ' + def.levels[0].damage + ' ／ 射程 ' + r.word + '<br>（約' + r.cells + 'マス）</div>' +
         '<div class="cost">🪙' + def.buildCost + '</div>';
       card.addEventListener('click', function () {
